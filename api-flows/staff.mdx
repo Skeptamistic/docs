@@ -7,6 +7,7 @@ sidebarTitle: "Staff API flow"
 The staff is the set of employees of the restaurant. Each staff member fulfills at least one role (set of tasks).
 
 The staff flow shown here includes the Expeditor role and the role of station-specific staff. The names of stations indicate the types of dishes that the staff members prepare at that station, such as hot, cold, and beverages.
+
 ![Staff flow](images/UJ_Staff.png)
 
 ## 1. Show new orders
@@ -129,7 +130,7 @@ In the following example, the priority of the first order in the results of the 
 curl -X 'PUT' \
   'https://{server url}/orders/681944cf3daa70417ad11eb4' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Authorization: Bearer {bearer token}' \
   -H 'Content-Type: application/json' \
   -d '{
   "dish_ids": [
@@ -164,7 +165,7 @@ Setting an order status to `In Progress` requries a `PUT` request to the `orders
 curl -X 'PUT' \
   '{server url}/orders/681944cf3daa70417ad11eb4' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Authorization: Bearer {bearer token}' \
   -H 'Content-Type: application/json' \
   -d '{
   "dish_ids": [
@@ -359,7 +360,7 @@ To implement that change of status by the expeditor, the client uses a `PUT` req
 curl -X 'PUT' \
   'https://{server url}/orders/681944cf3daa70417ad11eb4' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c'
+  -H 'Authorization: Bearer {bearer token}'
   -d '{
   "dish_ids": [
         "681944cf3daa70417ad11e76",

@@ -1,16 +1,18 @@
 ---
 title: "Patron"
+description: "Patron API Flow"
 sidebarTitle: "Patron API Flow"
-description: "Patron API flow"
 ---
 
 A patron is a customer of the restaurant.
 
 The patron flow is a model of the customer experience in ordering one or more dishes.
 
-![Patron flow](images/UJ_Patron.png)
+![UJ Patron Pn](/images/UJ_Patron.png)
 
 Each dish is in exactly one category, such as appetizer or main course. To browse dishes, the patron specifies a category. Within the category, the patron can inspect the ingredients and details of each dish before adding one or more dishes to an order (shopping) cart. When the patron is satisfied with the contents of the order cart, the patron sends (places) the order. The system responds with a confirmation message to the patron.
+
+## 1. Start Browsing / Click on a food category tab (appetizers, main course, etc.)
 
 ## 1. Browsing
 
@@ -310,7 +312,7 @@ Here's the Curl:
 curl -X 'POST' \
   'https://super-duper-parakeet-9jq576ww654h7qj4-80.app.github.dev/orders' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Authorization: Bearer {bearer token}' \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Patron",
