@@ -1,52 +1,331 @@
 ---
 title: "Patron flow"
-description: "A patron is a customer of the restaurant. The patron flow is a model of the customer experience in ordering one or more dishes."
+description: "A patron is a customer of the restaurant. The patron flow is a model of the customer experience in ordering one or more dishes.
+
+The patron flow has six steps. The patron does not have to furnish credentials for authentication or authorization for any of the steps.
+
+Each dish is in exactly one category, such as appetizer or main course. To browse dishes, the patron specifies a category. Within the category, the patron can inspect the ingredients and details of each dish before adding one or more dishes to an order (shopping) cart. When the patron is satisfied with the contents of the order cart, the patron sends (places) the order. The system responds with a confirmation message to the patron.
+
+"
 sidebarTitle: "Patron API Flow"
 ---
 
 ## 1. Start Browsing / Click on a food category tab (appetizers, main course, etc.)
 
+In this step, the patron explores different categories of dishes, such as appetizers or main courses. To focus on a subset of all dishes, the patron then selects a category of dishes.
+
+The request example here is for the Drinks category, which has only a few members.
+
 ### Request
 
-The client sends an HTTP request to ...
+The client sends a `GET` request to the `dishes` endpoint for the Drinks category:
+
+```bash
+curl -X 'GET' \
+  'http://{serverUrl}/dishes?sort=name&order=asc&fields=name|description|ingredients&filter=category.eq~Drinks&offset=0'
+```
+
+The request specifies that results are to be sorted in ascending order by the name of the drink (dish). For each drink, the result is to include the name, description, and list of ingredients. (The ingredients information is reused in the next step.)
+
+The request does not limit the quantity of drinks returned because, deliberately for convenience of the example, the Drinks category has only a few members and so pagination of results is not required.
 
 ### Response
 
-If the request succeeds, the server responds with...
+For a successful request, the server responds with a 200 status code and body of results as specified by the request. For this example, the Drinks category includes exactly six members.
+
+The application does not yet show results to the patron because one or more dishes might require an ingredient that is not sufficiently available. The system checks for ingredients in the next step.
+
+```json
+{
+  "results": [
+    {
+      "id": "681944cf3daa70417ad11e94",
+      "name": "Aperol Spritz",
+      "description": "A refreshing Italian cocktail made with Prosecco, Aperol, and soda water.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11dce",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e95"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dee",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e96"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dde",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e97"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11de7",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e98"
+        }
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11e81",
+      "name": "Cappuccino",
+      "description": "A frothy coffee drink made with espresso and steamed milk, often topped with foam.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11dc4",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e82"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dde",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e83"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11de9",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e84"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11de7",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e85"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11df5",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e86"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dea",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e87"
+        }
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11e99",
+      "name": "Chianti",
+      "description": "A robust red wine from Tuscany, known for its rich flavor and complex aroma.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11de3",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e9a"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11df2",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e9b"
+        }
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11e7d",
+      "name": "Espresso",
+      "description": "Strong, dark coffee served in small, concentrated shots.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11df4",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e7e"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd3",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e7f"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11df1",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e80"
+        }
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11e88",
+      "name": "Limoncello",
+      "description": "A sweet, lemon-flavored liqueur often enjoyed as a digestif.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11ddd",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e89"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dda",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e8a"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd1",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e8b"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd5",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e8c"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd6",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e8d"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11df5",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e8e"
+        }
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11e8f",
+      "name": "Negroni",
+      "description": "A classic Italian cocktail made with gin, vermouth, and Campari, garnished with an orange twist.",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11ddf",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e90"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd7",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e91"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dcf",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e92"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11de3",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e93"
+        }
+      ]
+    }
+  ],
+  "total_results": 6
+}
+```
 
 ## 2. Check Ingredient Quantities
 
+To make sure that ingredients are sufficient to make a dish, the system checks ingredient quantities before showing the dish as an option to the patron. The data for each dish specifies which ingredients (if any) are essential. If an essential ingredient is not available in a quantity that is sufficient, the system does not show the dish as available to the patron.
+
+For each essential ingredient, the client requests quantity information. If three ingredients are essential to a dish, then the client sends three requests.
+
+To continue the example, the client requests quantity information for the Negroni drink, the last in the response of the previous step. The first (and only) essential ingredient in the Negroni has the `ingredient_id` equal to `681944cf3daa70417ad11de3`.
+
 ### Request
 
-The client sends an HTTP request to ...
+The client sends a `GET` request to the ingredients endpoint for only the in-stock quantity of the essential ingredient:
+
+```bash
+curl -X 'GET' \
+  'http://{serverUrl}/ingredients/681944cf3daa70417ad11de3?fields=in_stock_qty'
+```
 
 ### Response
 
-If the request succeeds, the server responds with ...
+For a successful request, the server responds with a `200` status code and body of results as specified by the request. For this example, the specified ingredient has an in-stock quantity of 84.
+
+```json
+{
+  "id": "681944cf3daa70417ad11de3",
+  "in_stock_qty": 84
+}
+```
 
 ## 3. View Dish Details
 
+After the system validates that the essential ingredients are available for a dish, the system displays the dish as an available option to the patron. The patron then can choose to view the details of the dish. In this example, the patron selects the Negroni drink.
+
+The client retrieves information about a selected dish by using the `dishes` endpoint.
+
 ### Request
 
-The client sends an HTTP request to ...
+The client sends a `GET` request to the dishes endpoint, filtering on the dish id. We know from the response from step 1 that the Negroni dish id is `681944cf3daa70417ad11e8f`.
+
+```bash
+curl -X 'GET' \
+  'https://{serverUrl}/dishes/681944cf3daa70417ad11e8f?fields=name|image_name|ingredients|price'
+```
 
 ### Response
 
-If the request succeeds, the server responds with ...
+For a successful request, the server responds with a `200` status code and body of results as specified by the request. In this case, the client can use the dish details from the response to show the dish details to the patron.
+
+```json
+{
+  "id": "681944cf3daa70417ad11e8f",
+  "name": "Negroni",
+  "price": 2999,
+  "image_name": "negroni",
+  "ingredients": [
+    {
+      "ingredient_id": "681944cf3daa70417ad11ddf",
+      "is_essential": false,
+      "_id": "681944cf3daa70417ad11e90"
+    },
+    {
+      "ingredient_id": "681944cf3daa70417ad11dd7",
+      "is_essential": false,
+      "_id": "681944cf3daa70417ad11e91"
+    },
+    {
+      "ingredient_id": "681944cf3daa70417ad11dcf",
+      "is_essential": false,
+      "_id": "681944cf3daa70417ad11e92"
+    },
+    {
+      "ingredient_id": "681944cf3daa70417ad11de3",
+      "is_essential": true,
+      "_id": "681944cf3daa70417ad11e93"
+    }
+  ]
+}
+```
 
 ## 4. Adding Dishes and Viewing the Cart
 
-No Curl request needed. Just describe the process as it would occur in the user interface.
+The client shows the dishes details. For an order, the patron selects one more dishes and the system shows the dishes in the cart. The patron can view the cart before sending the order.
 
 ## 5. Placing an Order
 
+In this step, the patron commits to an order and the system sends the order from the cart to the staff. In this example, the patron orders a single Negroni.
+
+The client places the order by using the `orders` endpoint.
+
 ### Request
 
-The client sends an HTTP request to ...
+The client sends a `POST` request that includes the id of a dish that is in the cart, in this example the Negroni id of `681944cf3daa70417ad11e8f`:
+
+```json
+The response to the Curl is a 401.
+Here's the Curl:
+curl -X 'POST' \
+  'https://super-duper-parakeet-9jq576ww654h7qj4-80.app.github.dev/orders' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "Patron",
+  "table_number": 18,
+  "dish_ids": [ "681944cf3daa70417ad11e8f" ]
+}'
+
+And here's the 401 response body:
+{
+  "title": "Unauthorized",
+  "detail": "Bearer token is invalid."
+}
+```
 
 ### Response
 
-If the request succeeds, the server responds with ...
+For a successful request, the server responds with a `201` status code (`Created`) and body of results that includes `order_number`, which is useful later.
 
 ## 6. Order Confirmation
 
