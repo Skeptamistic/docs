@@ -1,16 +1,18 @@
 ---
-title: "Patron flow"
-description: "A patron is a customer of the restaurant. The patron flow is a model of the customer experience in ordering one or more dishes.
+title: "Patron"
+sidebarTitle: "Patron API Flow"
+description: "Patron API flow"
+---
 
-The patron flow has six steps. The patron does not have to furnish credentials for authentication or authorization for any of the steps.
+A patron is a customer of the restaurant.
+
+The patron flow is a model of the customer experience in ordering one or more dishes.
+
+![Patron flow](images/UJ_Patron.png)
 
 Each dish is in exactly one category, such as appetizer or main course. To browse dishes, the patron specifies a category. Within the category, the patron can inspect the ingredients and details of each dish before adding one or more dishes to an order (shopping) cart. When the patron is satisfied with the contents of the order cart, the patron sends (places) the order. The system responds with a confirmation message to the patron.
 
-"
-sidebarTitle: "Patron API Flow"
----
-
-## 1. Start Browsing / Click on a food category tab (appetizers, main course, etc.)
+## 1. Browsing
 
 In this step, the patron explores different categories of dishes, such as appetizers or main courses. To focus on a subset of all dishes, the patron then selects a category of dishes.
 

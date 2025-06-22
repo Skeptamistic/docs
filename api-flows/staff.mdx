@@ -1,9 +1,13 @@
 ---
-title: "Staff API flow"
-description: "The staff is the set of employees of the restaurant. Each staff member fulfills at least one role (set of tasks).
-The staff flow shown here describes the tasks that are performed by the Expeditor role for a new order. "
+title: "Staff"
+description: "Staff API flow"
 sidebarTitle: "Staff API flow"
 ---
+
+The staff is the set of employees of the restaurant. Each staff member fulfills at least one role (set of tasks).
+
+The staff flow shown here includes the Expeditor role and the role of station-specific staff. The names of stations indicate the types of dishes that the staff members prepare at that station, such as hot, cold, and beverages.
+![Staff flow](images/UJ_Staff.png)
 
 ## 1. Show new orders
 
@@ -286,7 +290,7 @@ To show the ingredients of a dish, the client uses the `dishes` endpoint with th
 
 ### Request
 
-The request uses this syntax: `GET /dishes/{id}/ingredients`. 
+The request uses this syntax: `GET /dishes/{id}/ingredients`.
 
 ```bash
 curl -X 'GET' \
