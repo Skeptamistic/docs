@@ -1,75 +1,382 @@
 ---
 title: "Staff API flow"
-description: "The staff is the set of employees of the restaurant. Each staff member fulfills at least one role (set of tasks)."
+description: "The staff is the set of employees of the restaurant. Each staff member fulfills at least one role (set of tasks).
+The staff flow shown here describes the tasks that are performed by the Expeditor role for a new order. "
 sidebarTitle: "Staff API flow"
 ---
 
-## 1. Order Display
+## 1. Show new orders
+
+The system shows a patron's new order on the Expeditor's UI. To do so, the Expeditor's client fetches new orders by using the `orders` endpoint.
+
+An order is considered new if it is placed on the current day. In this example, "current day" is interpreted as any day on or after the first day of the calendar year.
 
 ### Request
 
-The request info
+The client sends a `GET` request to the `orders`endpoint with a filter for the current day and orders with a status of `Received`:
+
+```bash
+curl -X 'GET' \
+  '{server url}/orders?sort=priority&order=asc&fields=table_number|status|priority|dish_ids&filter=status.eq~Received|created_at.gt~2025-01-01&offset=0'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code and body of results as specified by the request. For this example, seven orders are returned.
 
-## 2. Prioritization
+The `status` value in the response can be considered redundant because the filter in the request specifies that `status` be equal to `Received`.
+
+The `priority` value is useful in the Prioritization step of the process.
+
+```json
+{
+  "results": [
+    {
+      "id": "681944cf3daa70417ad11eb4",
+      "table_number": null,
+      "status": "Received",
+      "priority": 3,
+      "dish_ids": [
+        "681944cf3daa70417ad11e76",
+        "681944cf3daa70417ad11e1a",
+        "681944cf3daa70417ad11e54",
+        "681944cf3daa70417ad11e94",
+        "681944cf3daa70417ad11e46"
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11ebe",
+      "table_number": null,
+      "status": "Received",
+      "priority": 3,
+      "dish_ids": [
+        "681944cf3daa70417ad11dfd",
+        "681944cf3daa70417ad11e60",
+        "681944cf3daa70417ad11e1a",
+        "681944cf3daa70417ad11dfa",
+        "681944cf3daa70417ad11e11",
+        "681944cf3daa70417ad11e88"
+      ]
+    },
+    {
+      "id": "6829176347df75ec80011ef3",
+      "table_number": 20,
+      "status": "Received",
+      "priority": 3,
+      "dish_ids": [
+        "6829163547df75ec80011ee9"
+      ]
+    },
+    {
+      "id": "68291b5347df75ec80011f17",
+      "table_number": 25,
+      "status": "Received",
+      "priority": 3,
+      "dish_ids": [
+        "68291ac447df75ec80011f0d"
+      ]
+    },
+    {
+      "id": "68503ebd7910292052636871",
+      "table_number": 25,
+      "status": "Received",
+      "priority": 3,
+      "dish_ids": [
+        "681944cf3daa70417ad11dfa"
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11ec5",
+      "table_number": null,
+      "status": "Received",
+      "priority": 4,
+      "dish_ids": [
+        "681944cf3daa70417ad11e37",
+        "681944cf3daa70417ad11e15",
+        "681944cf3daa70417ad11e72"
+      ]
+    },
+    {
+      "id": "681944cf3daa70417ad11ec7",
+      "table_number": 7,
+      "status": "Received",
+      "priority": 5,
+      "dish_ids": [
+        "681944cf3daa70417ad11e81",
+        "681944cf3daa70417ad11e15"
+      ]
+    }
+  ],
+  "total_results": 7
+}
+```
+
+## 2. Adjust order priorities
+
+In this step, the expeditor can adjust order priorities. Priority values are in the range 1-5 inclusive, 1 the highest priority. The default priority value is 3.
+
+Changing the priority of an order requires the order `id` to be included in a `PUT`request to the `orders` endpoint.
+
+In the following example, the priority of the first order in the results of the previous step is set to `2`.
 
 ### Request
 
-The request info
+```
+curl -X 'PUT' \
+  'https://{server url}/orders/681944cf3daa70417ad11eb4' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "dish_ids": [
+        "681944cf3daa70417ad11e76",
+        "681944cf3daa70417ad11e1a",
+        "681944cf3daa70417ad11e54",
+        "681944cf3daa70417ad11e94",
+        "681944cf3daa70417ad11e46"
+  ],
+  "priority": 2,
+  "status": "Received"
+}'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code and body of results as specified by the request.
 
-## 3. Initiating Preparation
+```
+Blocked on bearer-token problem after re-authentication.
+```
+
+## 3. Start Preparation
+
+After the expeditor makes sure that order priorities are correct, the expeditor starts the preparation process for an order. To do so, the expeditor sets the order status to `In Progress`.
 
 ### Request
 
-The request info
+Setting an order status to `In Progress` requries a `PUT` request to the `orders` endpoint with the order `id`.
+
+```
+curl -X 'PUT' \
+  '{server url}/orders/681944cf3daa70417ad11eb4' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "dish_ids": [
+        "681944cf3daa70417ad11e76",
+        "681944cf3daa70417ad11e1a",
+        "681944cf3daa70417ad11e54",
+        "681944cf3daa70417ad11e94",
+        "681944cf3daa70417ad11e46"
+  ],
+  "priority": 2,
+  "status": "In Progress"
+}'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code and body of results as specified by the request.
+
+```json
+401 with this response body
+{
+  "title": "Unauthorized",
+  "detail": "Bearer token is invalid."
+}
+```
 
 ## 4. Order Preparation by Stations
 
+Each dish in an order that is `In Progress` must be assigned to a station, such as cold, hot, or beverages. The client machine at each station shows the dishes that are assigned to that station.
+
+For the station client to show a dish, the client uses the `orders` endpoint, specifies the order `id`, and then queries `dishes`.
+
 ### Request
 
-The request info
+The request uses this syntax: `GET /orders/{id}/dishes` .
+
+```bash
+curl -X 'GET' \
+  'https://{server ulr}/orders/681944cf3daa70417ad11eb4/dishes?sort=station&order=asc&fields=name|station|ingredients&filter=created_at.gt~2024-05-07|station.eq~beverages&offset=0'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code and body of results as specified by the request. The response includes every dish that is in the order. In this example, the system returns two beverage orders. The client must store the dish IDs locally for the next step in the process.
+
+```json
+{
+  "results": [
+    {
+      "id": "681944cf3daa70417ad11e76",
+      "name": "Affogato al Caffè",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11dde",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e77"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dee",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e78"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11ded",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e79"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dc5",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e7a"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dd4",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e7b"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11def",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e7c"
+        }
+      ],
+      "station": "beverages"
+    },
+    {
+      "id": "681944cf3daa70417ad11e94",
+      "name": "Aperol Spritz",
+      "ingredients": [
+        {
+          "ingredient_id": "681944cf3daa70417ad11dce",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e95"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dee",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e96"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11dde",
+          "is_essential": true,
+          "_id": "681944cf3daa70417ad11e97"
+        },
+        {
+          "ingredient_id": "681944cf3daa70417ad11de7",
+          "is_essential": false,
+          "_id": "681944cf3daa70417ad11e98"
+        }
+      ],
+      "station": "beverages"
+    }
+  ],
+  "total_results": 2
+}
+```
 
 ## 5. Display Dish Ingredients
 
+The station client must show to the station staff the ingredients for each dish.
+
+To show the ingredients of a dish, the client uses the `dishes` endpoint with the dish `id` (from the previous step in the process) and then queries `ingredients`.
+
 ### Request
 
-The request info
+The request uses this syntax: `GET /dishes/{id}/ingredients`. 
+
+```bash
+curl -X 'GET' \
+  'https://{server url}/dishes/681944cf3daa70417ad11e76/ingredients?sort=name&order=asc&fields=station%7Cname%7Cin_stock_qty&offset=0'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code and body of results as specified by the request. The response includes every ingredient that is in the dish that the request specifies.
+
+```json
+{
+  "results": [
+    {
+      "id": "681944cf3daa70417ad11dd4",
+      "name": "Avocado",
+      "in_stock_qty": 60
+    },
+    {
+      "id": "681944cf3daa70417ad11dc5",
+      "name": "Olive Oil",
+      "in_stock_qty": 52
+    },
+    {
+      "id": "681944cf3daa70417ad11ded",
+      "name": "Prosciutto",
+      "in_stock_qty": 22
+    },
+    {
+      "id": "681944cf3daa70417ad11def",
+      "name": "Saffron",
+      "in_stock_qty": 46
+    },
+    {
+      "id": "681944cf3daa70417ad11dee",
+      "name": "Salami",
+      "in_stock_qty": 13
+    },
+    {
+      "id": "681944cf3daa70417ad11dde",
+      "name": "Tomato",
+      "in_stock_qty": 83
+    }
+  ],
+  "total_results": 6
+}
+```
 
 ## 6. Ready for Assembly
 
-### Request
+When the staff at a station complete their part of an order, they mark it as `Ready for Assembly` on the station client machine.
 
-The request info
-
-### Response
-
-The response info
+When all of the dishes in an order are ready, the client-app logic notifies the expeditor. No API calls are required for this step.
 
 ## 7. Order Assembly
 
+In the order assembly step, the expeditor brings together the order dishes from each station that prepared at least one dish for the order.
+
+After the expeditor completes this work, the expeditor changes the order status. For table-side orders, the `status` changes to `On the Way`.  For takeaway orders, the expeditor changes the `status` to `Ready for Pickup`.
+
 ### Request
 
-The request info
+To implement that change of status by the expeditor, the client uses a `PUT` request with the `orders` endpoint.
+
+```bash
+curl -X 'PUT' \
+  'https://{server url}/orders/681944cf3daa70417ad11eb4' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer e98c7c18-562f-48f3-b241-2a8a8e83693c'
+  -d '{
+  "dish_ids": [
+        "681944cf3daa70417ad11e76",
+        "681944cf3daa70417ad11e1a",
+        "681944cf3daa70417ad11e54",
+        "681944cf3daa70417ad11e94",
+        "681944cf3daa70417ad11e46"
+  ],
+  "priority": 2,
+  "status": "On the Way"
+}'
+```
 
 ### Response
 
-The response info
+For a successful request, the server responds with a `200` status code with the response body that show the updated status.
+
+```json
+Same problem as before
+{
+  "title": "Unauthorized",
+  "detail": "Bearer token is invalid."
+}
+```
