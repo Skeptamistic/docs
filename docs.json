@@ -13,7 +13,7 @@
       {
         "tab": "Guides",
         "groups": [
-          {
+            { 
             "group": "Get Started",
             "pages": [
               "index",
@@ -21,13 +21,7 @@
               "development"
             ]
           },
-          {
-            "group": "API Flows",
-            "pages": [
-              "api-flows/patron",
-              "api-flows/staff"
-            ]
-          },
+
           {
             "group": "Essentials",
             "pages": [
@@ -37,6 +31,13 @@
               "essentials/settings",
               "essentials/navigation",
               "essentials/reusable-snippets"
+            ]
+          },
+          {
+            "group": "API Flows",
+            "pages": [
+              "api-flows/patron",
+              "api-flows/staff"
             ]
           }
         ]
