@@ -24,8 +24,8 @@
           {
             "group": "API Flows",
             "pages": [
-              "patron",
-              "staff"
+              "api-flows/patron",
+              "api-flows/staff"
             ]
           },
           {
