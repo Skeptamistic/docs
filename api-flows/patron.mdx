@@ -12,8 +12,6 @@ The patron flow is a model of the customer experience in ordering one or more di
 
 Each dish is in exactly one category, such as appetizer or main course. To browse dishes, the patron specifies a category. Within the category, the patron can inspect the ingredients and details of each dish before adding one or more dishes to an order (shopping) cart. When the patron is satisfied with the contents of the order cart, the patron sends (places) the order. The system responds with a confirmation message to the patron.
 
-## 1. Start Browsing / Click on a food category tab (appetizers, main course, etc.)
-
 ## 1. Browsing
 
 In this step, the patron explores different categories of dishes, such as appetizers or main courses. To focus on a subset of all dishes, the patron then selects a category of dishes.
@@ -43,174 +41,115 @@ The application does not yet show results to the patron because one or more dish
 {
   "results": [
     {
-      "id": "681944cf3daa70417ad11e94",
+      "id": "685895df7e453310d06b167a",
       "name": "Aperol Spritz",
-      "description": "A refreshing Italian cocktail made with Prosecco, Aperol, and soda water.",
+      "station": "beverages",
       "ingredients": [
         {
-          "ingredient_id": "681944cf3daa70417ad11dce",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e95"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dee",
+          "ingredient_id": "685895df7e453310d06b15cb",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e96"
+          "_id": "685895df7e453310d06b167b"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11dde",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e97"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11de7",
+          "ingredient_id": "685895df7e453310d06b15ca",
           "is_essential": false,
-          "_id": "681944cf3daa70417ad11e98"
+          "_id": "685895df7e453310d06b167c"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15bd",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b167d"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15c4",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b167e"
         }
       ]
     },
     {
-      "id": "681944cf3daa70417ad11e81",
-      "name": "Cappuccino",
-      "description": "A frothy coffee drink made with espresso and steamed milk, often topped with foam.",
-      "ingredients": [
-        {
-          "ingredient_id": "681944cf3daa70417ad11dc4",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e82"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dde",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e83"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11de9",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e84"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11de7",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e85"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11df5",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e86"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dea",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e87"
-        }
-      ]
-    },
-    {
-      "id": "681944cf3daa70417ad11e99",
-      "name": "Chianti",
-      "description": "A robust red wine from Tuscany, known for its rich flavor and complex aroma.",
-      "ingredients": [
-        {
-          "ingredient_id": "681944cf3daa70417ad11de3",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e9a"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11df2",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e9b"
-        }
-      ]
-    },
-    {
-      "id": "681944cf3daa70417ad11e7d",
+      "id": "685895df7e453310d06b1666",
       "name": "Espresso",
-      "description": "Strong, dark coffee served in small, concentrated shots.",
+      "station": "beverages",
       "ingredients": [
         {
-          "ingredient_id": "681944cf3daa70417ad11df4",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e7e"
+          "ingredient_id": "685895df7e453310d06b15c4",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1667"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11dd3",
+          "ingredient_id": "685895df7e453310d06b15e1",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e7f"
+          "_id": "685895df7e453310d06b1668"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11df1",
+          "ingredient_id": "685895df7e453310d06b15d4",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e80"
+          "_id": "685895df7e453310d06b1669"
         }
       ]
     },
     {
-      "id": "681944cf3daa70417ad11e88",
+      "id": "685895df7e453310d06b1671",
       "name": "Limoncello",
-      "description": "A sweet, lemon-flavored liqueur often enjoyed as a digestif.",
+      "station": "beverages",
       "ingredients": [
         {
-          "ingredient_id": "681944cf3daa70417ad11ddd",
+          "ingredient_id": "685895df7e453310d06b15d7",
           "is_essential": false,
-          "_id": "681944cf3daa70417ad11e89"
+          "_id": "685895df7e453310d06b1672"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11dda",
+          "ingredient_id": "685895df7e453310d06b15ba",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1673"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15da",
           "is_essential": false,
-          "_id": "681944cf3daa70417ad11e8a"
+          "_id": "685895df7e453310d06b1674"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11dd1",
+          "ingredient_id": "685895df7e453310d06b15dd",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e8b"
+          "_id": "685895df7e453310d06b1675"
         },
         {
-          "ingredient_id": "681944cf3daa70417ad11dd5",
+          "ingredient_id": "685895df7e453310d06b15bf",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e8c"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dd6",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e8d"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11df5",
-          "is_essential": true,
-          "_id": "681944cf3daa70417ad11e8e"
+          "_id": "685895df7e453310d06b1676"
         }
       ]
     },
     {
-      "id": "681944cf3daa70417ad11e8f",
-      "name": "Negroni",
-      "description": "A classic Italian cocktail made with gin, vermouth, and Campari, garnished with an orange twist.",
+      "id": "685895df7e453310d06b1684",
+      "name": "Prosecco",
+      "station": "beverages",
       "ingredients": [
         {
-          "ingredient_id": "681944cf3daa70417ad11ddf",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e90"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dd7",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e91"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11dcf",
-          "is_essential": false,
-          "_id": "681944cf3daa70417ad11e92"
-        },
-        {
-          "ingredient_id": "681944cf3daa70417ad11de3",
+          "ingredient_id": "685895df7e453310d06b15c7",
           "is_essential": true,
-          "_id": "681944cf3daa70417ad11e93"
+          "_id": "685895df7e453310d06b1685"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15df",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1686"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15db",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1687"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e8",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1688"
         }
       ]
     }
   ],
-  "total_results": 6
+  "total_results": 4
 }
 ```
 
