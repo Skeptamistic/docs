@@ -159,7 +159,7 @@ To make sure that ingredients are sufficient to make a dish, the system checks i
 
 For each essential ingredient, the client requests quantity information. If three ingredients are essential to a dish, then the client sends three requests.
 
-To continue the example, the client requests quantity information for the Negroni drink, the last in the response of the previous step. The first (and only) essential ingredient in the Prosecco has the `ingredient_id` equal to `685895df7e453310d06b1684`.
+To continue the example, the client requests quantity information for the Prosecco drink, the last in the response of the previous step. The last essential ingredient in the Prosecco has the `ingredient_id` equal to `685895df7e453310d06b15e8`.
 
 ### Request
 
@@ -167,7 +167,7 @@ The client sends a `GET` request to the ingredients endpoint for only the in-sto
 
 ```bash
 curl -X 'GET' \
-  'http://{serverUrl}/ingredients/685895df7e453310d06b1684?fields=in_stock_qty'
+  'https://{server url}/ingredients/685895df7e453310d06b15e8?fields=in_stock_qty%7Cname'
 ```
 
 ### Response
@@ -176,8 +176,8 @@ For a successful request, the server responds with a `200` status code and body 
 
 ```json
 {
-  "id": "681944cf3daa70417ad11de3",
-  "in_stock_qty": 84
+  "id": "685895df7e453310d06b15e8",
+  "in_stock_qty": 7
 }
 ```
 
@@ -202,29 +202,32 @@ For a successful request, the server responds with a `200` status code and body 
 
 ```json
 {
-  "results": [
+  "id": "685895df7e453310d06b1684",
+  "name": "Prosecco",
+  "price": 2999,
+  "station": "beverages",
+  "ingredients": [
     {
-      "id": "685895df7e453310d06b15df",
-      "name": "Bread Crumbs",
-      "in_stock_qty": 40
+      "ingredient_id": "685895df7e453310d06b15c7",
+      "is_essential": true,
+      "_id": "685895df7e453310d06b1685"
     },
     {
-      "id": "685895df7e453310d06b15db",
-      "name": "Chicken Stock",
-      "in_stock_qty": 3
+      "ingredient_id": "685895df7e453310d06b15df",
+      "is_essential": false,
+      "_id": "685895df7e453310d06b1686"
     },
     {
-      "id": "685895df7e453310d06b15c7",
-      "name": "Chili Flakes",
-      "in_stock_qty": 20
+      "ingredient_id": "685895df7e453310d06b15db",
+      "is_essential": true,
+      "_id": "685895df7e453310d06b1687"
     },
     {
-      "id": "685895df7e453310d06b15e8",
-      "name": "Chili Flakes",
-      "in_stock_qty": 7
+      "ingredient_id": "685895df7e453310d06b15e8",
+      "is_essential": true,
+      "_id": "685895df7e453310d06b1688"
     }
-  ],
-  "total_results": 4
+  ]
 }
 ```
 
