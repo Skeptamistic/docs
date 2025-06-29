@@ -24,12 +24,13 @@ The client sends a `GET` request to the `dishes` endpoint for the Drinks categor
 
 ```bash
 curl -X 'GET' \
-  'http://{serverUrl}/dishes?sort=name&order=asc&fields=name|description|ingredients&filter=category.eq~Drinks&offset=0'
+  'https://{server url}/dishes?sort=name&order=asc&fields=name%7Cingredients%7Cstation&filter=station.eq~beverages&offset=0' \
+  -H 'accept: application/json'
 ```
 
-The request specifies that results are to be sorted in ascending order by the name of the drink (dish). For each drink, the result is to include the name, description, and list of ingredients. (The ingredients information is reused in the next step.)
+The request specifies that results are to be sorted in ascending order by the name of the beverage (dish). For each beverage, the result is to include the name, list of ingredients, and the name of the station.
 
-The request does not limit the quantity of drinks returned because, deliberately for convenience of the example, the Drinks category has only a few members and so pagination of results is not required.
+The request does not limit the quantity of beverages returned because, deliberately for convenience of the example, the category has only a few members and so pagination of results is not required.
 
 ### Response
 
@@ -40,6 +41,43 @@ The application does not yet show results to the patron because one or more dish
 ```json
 {
   "results": [
+    {
+      "id": "685895df7e453310d06b165f",
+      "name": "Affogato al Caffè",
+      "station": "beverages",
+      "ingredients": [
+        {
+          "ingredient_id": "685895df7e453310d06b15e3",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1660"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15bd",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1661"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15d4",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1662"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15da",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1663"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15bb",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1664"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15bc",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1665"
+        }
+      ]
+    },
     {
       "id": "685895df7e453310d06b167a",
       "name": "Aperol Spritz",
@@ -64,6 +102,70 @@ The application does not yet show results to the patron because one or more dish
           "ingredient_id": "685895df7e453310d06b15c4",
           "is_essential": true,
           "_id": "685895df7e453310d06b167e"
+        }
+      ]
+    },
+    {
+      "id": "685895df7e453310d06b166a",
+      "name": "Cappuccino",
+      "station": "beverages",
+      "ingredients": [
+        {
+          "ingredient_id": "685895df7e453310d06b15bc",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b166b"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e2",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b166c"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15d9",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b166d"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e8",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b166e"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15ba",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b166f"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15ca",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1670"
+        }
+      ]
+    },
+    {
+      "id": "685895df7e453310d06b167f",
+      "name": "Chianti",
+      "station": "beverages",
+      "ingredients": [
+        {
+          "ingredient_id": "685895df7e453310d06b15d4",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1680"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e9",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1681"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e3",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1682"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15c9",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1683"
         }
       ]
     },
@@ -122,6 +224,23 @@ The application does not yet show results to the patron because one or more dish
       ]
     },
     {
+      "id": "685895df7e453310d06b1677",
+      "name": "Negroni",
+      "station": "beverages",
+      "ingredients": [
+        {
+          "ingredient_id": "685895df7e453310d06b15bd",
+          "is_essential": false,
+          "_id": "685895df7e453310d06b1678"
+        },
+        {
+          "ingredient_id": "685895df7e453310d06b15e8",
+          "is_essential": true,
+          "_id": "685895df7e453310d06b1679"
+        }
+      ]
+    },
+    {
       "id": "685895df7e453310d06b1684",
       "name": "Prosecco",
       "station": "beverages",
@@ -149,51 +268,73 @@ The application does not yet show results to the patron because one or more dish
       ]
     }
   ],
-  "total_results": 4
+  "total_results": 8
 }
 ```
 
 ## 2. Check Ingredient Quantities
 
-To make sure that ingredients are sufficient to make a dish, the system checks ingredient quantities before showing the dish as an option to the patron. The data for each dish specifies which ingredients (if any) are essential. If an essential ingredient is not available in a quantity that is sufficient, the system does not show the dish as available to the patron.
+To make sure that ingredients are sufficient to make a dish, the system checks ingredient quantities before showing the dish as an option to the patron. The data for each dish specifies which ingredients (if any) are essential. If an essential ingredient is not available, the system does not show the dish to the patron.
 
 For each essential ingredient, the client requests quantity information. If three ingredients are essential to a dish, then the client sends three requests.
 
-To continue the example, the client requests quantity information for the Prosecco drink, the last in the response of the previous step. The last essential ingredient in the Prosecco has the `ingredient_id` equal to `685895df7e453310d06b15e8`.
+To continue the example, the client requests quantity information for the Prosecco drink, the last in the response of the previous step. The last essential ingredient in the Prosecco has the `ingredient_id` equal to `685895df7e453310d06b1684`.
 
 ### Request
 
-The client sends a `GET` request to the ingredients endpoint for only the in-stock quantity of the essential ingredient:
+The client sends a `GET` request to the endpoint `/dishes/{id}/ingredients` for the in-stock quantity of the essential ingredients:
 
 ```bash
 curl -X 'GET' \
-  'https://{server url}/ingredients/685895df7e453310d06b15e8?fields=in_stock_qty%7Cname'
+  'https://{server url}/dishes/685895df7e453310d06b1684/ingredients?sort=name&order=asc&fields=name%7Cin_stock_qty&limit=10&offset=0' \
+  -H 'accept: application/json'
 ```
 
 ### Response
 
-For a successful request, the server responds with a `200` status code and body of results as specified by the request. For this example, the specified ingredient has an in-stock quantity of 84.
+For a successful request, the server responds with a `200` status code and body of results as specified by the request.
 
 ```json
 {
-  "id": "685895df7e453310d06b15e8",
-  "in_stock_qty": 7
+  "results": [
+    {
+      "id": "685895df7e453310d06b15df",
+      "name": "Bread Crumbs",
+      "in_stock_qty": 40
+    },
+    {
+      "id": "685895df7e453310d06b15db",
+      "name": "Chicken Stock",
+      "in_stock_qty": 3
+    },
+    {
+      "id": "685895df7e453310d06b15c7",
+      "name": "Chili Flakes",
+      "in_stock_qty": 20
+    },
+    {
+      "id": "685895df7e453310d06b15e8",
+      "name": "Chili Flakes",
+      "in_stock_qty": 7
+    }
+  ],
+  "total_results": 4
 }
 ```
 
 ## 3. View Dish Details
 
-After the system validates that the essential ingredients are available for a dish, the system displays the dish as an available option to the patron. The patron then can choose to view the details of the dish. In this example, the patron selects the Negroni drink.
+After the system validates that the essential ingredients are available for a dish, the system displays the dish as an available option to the patron. The patron then can choose to view the details of the dish. In this example, the patron selects the Prosecco.
 
 The client retrieves information about a selected dish by using the `dishes` endpoint.
 
 ### Request
 
-The client sends a `GET` request to the dishes endpoint, filtering on the dish id. We know from the response from step 1 that the Prosecco dish id is `685895df7e453310d06b1684`.
+The client sends a `GET` request to the` dishes` endpoint, filtering on the dish id. We know that the Prosecco dish id is `685895df7e453310d06b1684`.
 
 ```bash
 curl -X 'GET' \
-  'https://{serverUrl}/dishes/685895df7e453310d06b1684?fields=name|image_name|ingredients|price'
+  'https://{serverUrl}/dishes/685895df7e453310d06b1684?fields=name|price|station|ingredients'
 ```
 
 ### Response
@@ -237,23 +378,24 @@ The client shows the dishes details. For an order, the patron selects one more d
 
 ## 5. Placing an Order
 
-In this step, the patron commits to an order and the system sends the order from the cart to the staff. In this example, the patron orders a single Negroni.
+In this step, the patron commits to an order and the system sends the order from the cart to the staff. In this example, the patron orders a Prosecco.
 
 The client places the order by using the `orders` endpoint.
 
 ### Request
 
-The client sends a `POST` request that includes the id of a dish that is in the cart, in this example the Prosecco id of `685895df7e453310d06b1684`:
+The client sends a `POST` request that includes the is of a dish that is in the cart, in this example the Prosecco id of `685895df7e453310d06b1684`:
 
 ```json
 curl -X 'POST' \
-  'https://crispy-potato-g75r4x66qx6fwrxg-80.app.github.dev/orders' \
+  'https://{server url}/orders' \
   -H 'accept: application/json' \
+  -H 'Authorization: Bearer a1732455-42cf-4d24-a956-84adc847c0ca' \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Ben",
   "table_number": 18,
-  "dish_ids": [ "685895df7e453310d06b1684" ],
+  "dish_ids": ["685895df7e453310d06b1684"],
   "special_requests": "No peanuts.",
   "scheduled at": null
 }'
@@ -261,17 +403,21 @@ curl -X 'POST' \
 
 ### Response
 
-For a successful request, the server responds with a `201` status code (`Created`) and body of results that includes `order_number`, which is useful later.
+For a successful request, the server responds with a `201` status code (`Created`) .
 
 ```json
 {
-  "message": "Authorization header required",
-  "errors": [
-    {
-      "path": "/orders",
-      "message": "Authorization header required"
-    }
-  ]
+  "id": "6861993b6c98c51d5e854882",
+  "created_at": "2025-06-29T19:51:23.372Z",
+  "updated_at": "2025-06-29T19:51:23.373Z",
+  "scheduled_at": null,
+  "table_number": 18,
+  "status": "Received",
+  "priority": 3,
+  "dish_ids": [
+    "685895df7e453310d06b1684"
+  ],
+  "special_requests": "No peanuts."
 }
 ```
 
