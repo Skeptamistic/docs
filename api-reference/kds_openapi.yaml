@@ -1,0 +1,2022 @@
+openapi: 3.0.3
+info:
+  title: Point of Service (POS) API
+  version: '1.0'
+  description: ...
+  contact:
+    name: Course Discord server
+    url: https://discord.gg/dPsnz5u9
+    email: mark.wentowski@docsgeek.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'https://super-duper-parakeet-9jq576ww654h7qj4-80.app.github.dev/'
+    description: ...
+    variables:
+      gh-codespaces-server-url:
+        default: https://<workspace-id>.app.github.dev
+        description: ...
+  - url: http://localhost:80/
+    description: ...
+tags:
+  - name: Orders
+    description: ...
+  - name: Dishes
+    description: ...
+  - name: Ingredients
+    description: ...
+  - name: Users
+    description: ...
+  - name: Auth
+    description: ...
+paths:
+  /orders:
+    post:
+      summary: |
+        The client requests that the server create an order record.
+      operationId: postOrder
+      description: |
+        The client requests that the server create an order. The server responds with an `id` that must be used for later interaction with the order.
+        
+        An order can be considered the apex data structure in the system. An order includes information about its own status, dishes, times, priorities, and the name of the staff who used the client to create the order.
+      tags:
+        - Orders
+      security:
+        - AccessToken: []
+      responses:
+        '201':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrderRequest'
+    get:
+      summary: |
+        Retrieve an array of orders.
+      description: |
+        The server returns an array of orders, including details specified by the client.
+      operationId: getOrderList
+      tags:
+        - Orders
+      parameters:
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: priority
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+          schema:
+            type: string
+          example: table_number|status|priority
+        - name: filter
+          in: query
+          description: |
+            Criteria for the scope of results. Separate field names with `|`. Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: table_number.lt~5|status.eq~On the Way
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            0 omits no results, and 1 omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  total_results:
+                    type: integer
+                    example: 20
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /orders/{id}:
+    get:
+      summary: |
+        Retrieve details of one order.
+      description: |
+        Retrieve details of the order that is specified by `id`.
+        
+        For a list of order `id`s, use `GET /orders`.
+      operationId: getOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bcc
+          description: |
+            Unique hexadecimal identifier of the order.
+        - name: fields
+          in: query
+          description: |
+            Identifies the fields from which results are to be returned. Separate field names with `|`.
+          schema:
+            type: string
+          example: table_number|status|priority
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      summary: |
+        Replace the value of one or more parameters for one order.
+      description: |
+        For the `id` dish, replace the value of the specified parameters.
+      operationId: putOrder
+      tags:
+        - Orders
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bcd
+          description: |
+            Unique hexadecimal identifier of the order.
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateOrderRequest'
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  total_results:
+                    type: integer
+                    example: 1
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      summary: |
+        Remove one order from the database.
+      description: |
+        Remove from the database the record of the `id` order.
+        
+        CAUTION: The operation permanently removes the data about the order and releases the `id`.
+      operationId: deleteOrder
+      tags:
+        - Orders
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bca
+          description: |
+            Unique hexadecimal identifier of the order.
+      responses:
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /orders/{id}/dishes:
+    get:
+      summary: |
+        Retrieve the details of dishes for one order.
+      description: |
+        For the `id` order, retrieve details for the dishes that are the order. The details can be from any set of fields.
+      operationId: getOrderDishes
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bcb
+          description: |
+            Unique hexadecimal identifier of order.
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: station
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names of the fields from which results are to be returned.
+          schema:
+            type: string
+          example: name|station|ingredients
+        - name: filter
+          in: query
+          description: |
+            Sets criteria for the scope of results. Separate field names with `|`.
+            
+            Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: created_at.gt~2024-05-07|station.eq~hot
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            `0` omits no results, and `1` omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Dish'
+                  total_results:
+                    type: integer
+                    example: 1
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /dishes:
+    post:
+      summary: |
+        Create a dish record.
+      tags:
+        - Dishes
+      operationId: postDishes
+      security:
+        - AccessToken: []
+      description: |
+        The client requests that the server create a dish record.
+      requestBody:
+        $ref: '#/components/requestBodies/CreateDishRequest'
+      responses:
+        '201':
+          description: |
+            Dish created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    get:
+      summary: |
+        Retrieve details of each dish.
+      description: |
+        The server returns an array of dishes that meet the criteria that the client specifies in the parameters.
+        
+        The `id` in the response must be used later to associate the dish to `order` objects.
+
+        Field selection, filtering, and sorting, are supported. The scope of results is influenced by `fields`, `filter`, `limit` and `offset`.
+
+      operationId: getDishList
+      tags:
+        - Dishes
+      parameters:
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: name
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+          schema:
+            type: string
+          example: name|ingredients|station
+        - name: filter
+          in: query
+          description: |
+            Criteria for the scope of results. Separate field names with `|`.
+            
+            Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: created_at.gt~2024-05-07|price.lte~19.99
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            `0` omits no results, and `1` omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Dish'
+                  total_results:
+                    type: integer
+                    example: 20
+                    description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /dishes/{id}:
+    get:
+      summary: |
+        Retrieve details of one dish.
+      description: |
+        Retrieve details of the dish that is specified by `id`.
+        
+        For a list of dish `ids`, use `GET /dishes`.
+        
+        The details can be from any set of fields.
+      operationId: getDish
+      tags:
+        - Dishes
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 66294b2a4475a41f3e709bd1
+          description: |
+            Unique hexadecimal identiifer of the dish.
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned. Separate field names with `|`.
+          schema:
+            type: string
+          example: name|price|station|ingredients
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      summary: |
+        Replace the value of one or more parameters for one dish.
+      operationId: putDish
+      tags:
+        - Dishes
+      security:
+        - AccessToken: []
+      description: |
+        For the `id` dish, replace the value of the specified parameters.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bce
+          description: |
+            Unique hexadecimal identifier of the dish.
+            
+            For dish `id`s, use `getDishList`.
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateDishRequest'
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      summary: |
+        Remove one dish from the database.
+      description: |
+        Remove from the database the record of the `id` dish.
+        
+        CAUTION: The operation permanently removes the data about the dish and releases the `id`.
+      operationId: deleteDish
+      tags:
+        - Dishes
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bd0
+          description: |
+            Unique hexadecimal identifier of the dish.
+      responses:
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /dishes/{id}/ingredients:
+    get:
+      summary: |
+        Retrieve the details of ingredients for one dish.
+      description: ...
+      operationId: getDishIngredients
+      tags:
+        - Dishes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bd2
+          description: |
+            Unique hexadecimal identifierof the dish.
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: name
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+          schema:
+            type: string
+          example: name|in_stock_qty
+        - name: filter
+          in: query
+          description: |
+            Criteria for the scope of results. Separate field names with `|`.
+            
+            Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: created_at.gt~2024-05-07|in_stock_qty.gt~3
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            0 omits no results, and 1 omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ingredient'
+                  total_results:
+                    type: integer
+                    example: 1
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /ingredients:
+    post:
+      summary: Create an ingredient
+      description: |
+        The client requests that the server
+        create an ingredient that
+        includes the `name`, `in_stk_qty`,
+        and `price`, of the ingredient.
+        
+        `in_stk_qty` enables the
+        server to calculate whether enough of
+        the ingredient is available to make
+        the dishes that use the ingredient.
+        
+        The server returns an `id` that 
+        enables the system to associate the
+        ingredient to the dishes that use
+        the ingredient.
+      operationId: postIngredient
+      tags:
+        - Ingredients
+      security:
+        - AccessToken: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateIngredientRequest'
+      responses:
+        '201':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    get:
+      summary: |
+        Retrieve details of each ingredient
+      description: |
+        The server returns a list of ingredients that meet the criteria that the client specifies in the parameters. Field selection, filtering, and sorting, are supported. The scope of results is influenced by `fields`, `filter`, `limit` and `offset`. The `id` in the response is used to associate the ingredient to `dish` objects.
+      operationId: getIngredientList
+      tags:
+        - Ingredients
+      parameters:
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: name
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+          schema:
+            type: string
+          example: name|in_stock_qty
+        - name: filter
+          in: query
+          description: |
+            Sets criteria for the scope of results. Separate field names with `|`.
+            
+            Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: created_at.gt~2024-05-07|in_stock_qty.lt~5
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            Example: `0` omits no results, and `1` omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ingredient'
+                  total_results:
+                    type: integer
+                    example: 1
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /ingredients/{id}:
+    get:
+      summary: |
+        Retrieve details of one ingredient.
+      description: |
+        Retrieve details of the ingredient that is specified by `id`.
+        
+        For a list of ingredient `id`s, use `GET /ingredients`.
+        
+        The details can be from any set of fields.
+      operationId: getIngredient
+      tags:
+        - Ingredients
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 614d706b67c122001f35cc47
+          description: |
+            Unique hexadecimal identifier of the ingredient.
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+            
+            Separate field names with `|`.
+          schema:
+            type: string
+          example: in_stock_qty|name
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      summary: |
+        Replace the value of one or more parameters for one ingredient.
+      description: |
+        For the `id` ingredient, replace the value of the specified parameters.
+        
+        The most frequent changes are to the `in_stk_qty`, because preparation of a dish reduces the quantity that is available to the kitchen.
+      operationId: putIngredient
+      tags:
+        - Ingredients
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 617d2e09ec42e0001f41bf84
+          description: |
+            Unique hexadecimal identifier of the ingredient
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateIngredientRequest'
+      responses:
+        '200':
+          description: ...
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      summary: |
+        Remove one ingredient from the database.
+      description: |
+        Remove from the database the record of the `id` ingredient.
+        
+        CAUTION: The operation permanently removes the data about the ingredient and releases the `id`.
+      operationId: deleteIngredient
+      tags:
+        - Ingredients
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 61c8c34bb02368001f8f0812
+          description: |
+            Unique hexadecimal identifier of the ingredient.
+      responses:
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /users:
+    post:
+      summary: Create a user account.
+      description: |
+        With an admin user, the client requests that the server create a user account. The server returns an `id` that enables the system to specify the user account for other operations, such as a staff member creating orders or updating ingredient inventory data.
+        
+        User account details must include:
+        - `email`
+        - `password`
+        - `role`
+        - `user_name`
+        
+        Values for `role` are:
+        - `chef`
+        - `expeditor`
+        - `manager`
+        - `patron`
+        
+        Some operations in the system require access tokens. After the user authenticates to the system, the system exchanges the `user_name` and `password` for a token.
+      operationId: postUser
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/CreateUserRequest'
+      responses:
+        '201':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      security: []
+    get:
+      summary: |
+        Retrieve the details of each user account.
+      description: |
+        The server returns an array of the details of each user account that meet the criteria that the client specifies in the parameters.
+        
+        Field selection, filtering, and sorting, are supported.
+        
+        The scope of results is influenced by `fields`, `filter`, `limit` and `offset`.
+        
+        The `id` is required to work data that is about a specific user account.
+      operationId: getAllUsers
+      tags:
+        - Users
+      parameters:
+        - name: sort
+          in: query
+          description: |
+            Specifies the name of the field by which the server sets the sequence of the results.
+          schema:
+            type: string
+          example: user_name
+        - name: order
+          in: query
+          description: |
+            Specifies whether the sequence of results is to be ascending or descending. See `sort`.
+          schema:
+            type: string
+          example: asc
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned.
+          schema:
+            type: string
+          example: user_name|email|role
+        - name: filter
+          in: query
+          description: |
+            Sets criteria for the scope of results. Separate field names with `|`. Basic equality and comparison operators, and standard date formats, are supported.
+          schema:
+            type: string
+            example: created_at.gt~2024-05-07|user_name.eq~apiuser01
+        - name: limit
+          in: query
+          description: |
+            The maximum quantity of results per page (<= 30).
+          schema:
+            type: integer
+            maximum: 30
+          example: 10
+        - name: offset
+          in: query
+          description: |
+            The quantity of results to omit, counting from the beginning of the query results.
+            
+            `0` omits no results, and `1` omits one result from the beginning.
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total_results:
+                    type: integer
+                    example: 20
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /users/{id}:
+    get:
+      summary: |
+        Retrieve details of one user account.
+      description: |
+        Retrieve the details of the user account that is specified by `id`.
+        
+        For a list of user account ids, use `GET /users`.
+        
+        The details can be from any set of fields.
+      operationId: getUser
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bc9
+          description: |
+            Unique hexadecimal identifier of the user account.
+        - name: fields
+          in: query
+          description: |
+            Names the fields from which results are to be returned. Separate field names with `|`.
+          schema:
+            type: string
+          example: user_name|role
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      summary: |
+        Replace the value of one or more parameters for one user account.
+      description: |
+        For the `id` user account, replace the value of the specified parameters.
+      operationId: putUser
+      tags:
+        - Users
+      security:
+        - AccessToken: []
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUserRequest'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bc9
+          description: |
+            Unique hexadecimal identifier of the user account.
+      responses:
+        '200':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '204':
+          description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      summary: |
+        Remove one user account from the database.
+      description: |
+        Remove from the database the record of the `id` user account.
+        
+        CAUTION: The operation permanently removes the data about the user and releases the `id`.
+      operationId: deleteUser
+      tags:
+        - Users
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 66294b2a4475a41f3e709bca
+          description: |
+            Unique hexadecimal identifier of the user account.
+      responses:
+        '204':
+          description: |
+            OK
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /auth/token:
+    post:
+      summary: |
+        Authenticate a user and obtain an access token
+      description: |
+        Using the `user_name` and `password` as entered by
+        the user, the client requests that the server return an `access_token`.
+        
+        Protected endpoints, such as `POST` and `PUT` endpoints, require the `access_token` for their operations.
+        
+        A successful response includes both the `access_token` with an expiry timestamp and `token_type`, and a `refesh_token`.
+      operationId: postAuthLogin
+      tags:
+        - Auth
+      security:
+        - BasicAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTokenRequest'
+      responses:
+        '201':
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '409':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /auth/refresh-token:
+    post:
+      summary: |
+        Refresh access
+      description: |
+        Convert an authorization access token to a refresh access token. The refresh token typically expires much later than the authorization access token, and so enables a more continuous user experience.
+        
+        The request body includes the `refresh_token` from the prior `POST /auth/token` operation.
+        
+        The response includes a new `access_token` and `refresh_token` with a new expiry timestamp.
+      operationId: postAuthRefreshToken
+      tags:
+        - Auth
+      requestBody:
+        description: ...
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                refresh_token:
+                  $ref: '#/components/schemas/RefreshToken'
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: ...
+        '400':
+          description: ...
+        '401':
+          description: ...
+        '403':
+          description: ...
+        '404':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+components:
+  requestBodies:
+    CreateDishRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Risotto alla Milanese
+                description: ...
+              description:
+                $ref: '#/components/schemas/Description'
+              category:
+                $ref: '#/components/schemas/Category'
+              image_name:
+                $ref: '#/components/schemas/ImageName'
+              ingredients:
+                $ref: '#/components/schemas/Ingredients'
+              preparation_time:
+                $ref: '#/components/schemas/PreparationTime'
+              price:
+                $ref: '#/components/schemas/Price'
+              station:
+                $ref: '#/components/schemas/Station'
+            required:
+              - category
+              - description
+              - image_name
+              - ingredients
+              - preparation_time
+              - name
+              - price
+              - station
+    UpdateDishRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Risotto alla Milanese
+                description: ...
+              description:
+                $ref: '#/components/schemas/Description'
+              category:
+                $ref: '#/components/schemas/Category'
+              image_name:
+                $ref: '#/components/schemas/ImageName'
+              ingredients:
+                $ref: '#/components/schemas/Ingredients'
+              preparation_time:
+                $ref: '#/components/schemas/PreparationTime'
+              price:
+                $ref: '#/components/schemas/Price'
+              station:
+                $ref: '#/components/schemas/Station'
+    CreateIngredientRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Carrot
+                description: |
+                  The name of the ingredient as
+                  the client displays it to
+                  any user.
+              in_stock_qty:
+                $ref: '#/components/schemas/InStockQty'
+              price:
+                $ref: '#/components/schemas/Price'
+            required:
+              - name
+              - in_stock_qty
+              - price
+    UpdateIngredientRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Carrot
+                description: ...
+              in_stock_qty:
+                $ref: '#/components/schemas/InStockQty'
+              price:
+                $ref: '#/components/schemas/Price'
+    CreateOrderRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                pattern: ^[^\s]*$
+                example: John
+                description: ...
+              table_number:
+                $ref: '#/components/schemas/TableNumber'
+              dish_ids:
+                $ref: '#/components/schemas/DishIds'
+              special_requests:
+                $ref: '#/components/schemas/SpecialRequests'
+              scheduled_at:
+                $ref: '#/components/schemas/ScheduledAt'
+            required:
+              - dish_ids
+              - name
+          examples:
+            Order - Unscheduled:
+              value:
+                name: Ben
+                table_number: 18
+                dish_ids:
+                  - 692a4a34a46ecf001f35ac6f
+                  - 6a4a857c022eb7001f9b8972
+                  - 6b7c2441a0db43001f9bf377
+                special_requests: No peanuts.
+                scheduled at: null
+            Order - Scheduled:
+              value:
+                name: Ben
+                table_number: 18
+                dish_ids:
+                  - 692a4a34a46ecf001f35ac6f
+                  - 6a4a857c022eb7001f9b8972
+                  - 6b7c2441a0db43001f9bf377
+                scheduled_at: '2024-08-26T09:03:18.865Z'
+    UpdateOrderRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              dish_ids:
+                $ref: '#/components/schemas/DishIds'
+              priority:
+                $ref: '#/components/schemas/Priority'
+              status:
+                $ref: '#/components/schemas/Status'
+    CreateTokenRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              grant_type:
+                type: string
+                description: ...
+                example: password
+              user_name:
+                $ref: '#/components/schemas/UserName'
+              password:
+                $ref: '#/components/schemas/Password'
+            required:
+              - grant_type
+              - user_name
+              - password
+    CreateUserRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                $ref: '#/components/schemas/Email'
+              password:
+                $ref: '#/components/schemas/Password'
+              role:
+                $ref: '#/components/schemas/Role'
+              user_name:
+                $ref: '#/components/schemas/UserName'
+            required:
+              - email
+              - password
+              - role
+              - user_name
+    UpdateUserRequest:
+      description: ...
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                $ref: '#/components/schemas/Email'
+              password:
+                $ref: '#/components/schemas/Password'
+              role:
+                $ref: '#/components/schemas/Role'
+              user_name:
+                $ref: '#/components/schemas/UserName'
+  schemas:
+    AccessToken:
+      type: string
+      description: ...
+      example: fa0b97b2-445f-41d2-b50f-fb3b014a301e
+    SpecialRequests:
+      type: string
+      nullable: true
+      description: ...
+    Auth:
+      type: object
+      description: ...
+      properties:
+        auth_id:
+          $ref: '#/components/schemas/Id'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+        access_token:
+          $ref: '#/components/schemas/AccessToken'
+        expires_at:
+          $ref: '#/components/schemas/ExpiresAt'
+        refresh_token:
+          $ref: '#/components/schemas/RefreshToken'
+        token_type:
+          $ref: '#/components/schemas/TokenType'
+        user_name:
+          $ref: '#/components/schemas/UserName'
+    Category:
+      type: string
+      enum:
+        - Appetizer
+        - Main Course
+        - Dessert
+        - Drinks
+      example: Main Course
+      description: ...
+    CreatedAt:
+      type: string
+      format: date-time
+      example: '2024-04-22T10:00:00Z'
+      readOnly: true
+      description: |
+        The date and time at which the system
+        created the object. Once posted, the value
+        never changes.
+        
+        For the date and time at which the 
+        system changes the object, see 
+        UpdatedAt.
+    Description:
+      type: string
+      example: A description of the resource.
+    Dish:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        name:
+          type: string
+          example: Risotto alla Milanese
+          description: ...
+        description:
+          $ref: '#/components/schemas/Description'
+        category:
+          $ref: '#/components/schemas/Category'
+        image_name:
+          $ref: '#/components/schemas/ImageName'
+        ingredients:
+          $ref: '#/components/schemas/Ingredients'
+        preparation_time:
+          $ref: '#/components/schemas/Price'
+        price:
+          $ref: '#/components/schemas/Price'
+        station:
+          $ref: '#/components/schemas/Station'
+    DishIds:
+      type: array
+      items:
+        type: string
+      example:
+        - 692a4a34a46ecf001f35ac6f
+        - 6a4a857c022eb7001f9b8972
+        - 6b7c2441a0db43001f9bf377
+      description: ...
+    Email:
+      type: string
+      format: email
+      description: ...
+      example: johndoe@gmail.com
+    ExpiresAt:
+      type: string
+      format: date-time
+      example: '2024-04-22T10:00:00Z'
+      readOnly: true
+      description: ...
+    RefreshToken:
+      type: string
+      description: ...
+      example: d1a3e281-96b6-4f77-a587-7b6c8c2a96d9
+    Id:
+      type: string
+      example: 674d0bf5c28b69001f8e03a1
+      readOnly: true
+      description: |
+        The unique hexadecimal
+        identifier of the object.
+    ImageName:
+      type: string
+      description: ...
+      example: burger
+    Ingredients:
+      type: array
+      description: ...
+      items:
+        type: object
+        properties:
+          ingredient_id:
+            type: string
+            example: '66294b2a4475a41f3e709bc5'
+            description: ...
+          is_essential:
+            type: boolean
+            example: true
+            description: ...
+      example:
+        - ingredient_id: '66294b2a4475a41f3e709bc5'
+          is_essential: true
+        - ingredient_id: '66294b2a4475a41f3e709bc6'
+          is_essential: true
+        - ingredient_id: '66294b2a4475a41f3e709bc7'
+          is_essential: false
+    Ingredient:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+        name:
+          type: string
+          example: Carrot
+          description: |
+            The human-readable name of the
+            ingredient as displayed by the
+            client to any user.
+        in_stock_qty:
+          $ref: '#/components/schemas/InStockQty'
+        price:
+          $ref: '#/components/schemas/Price'
+    InStockQty:
+      type: integer
+      description: |
+        The ingredient quantity that is
+        available to make a dish.
+      example: 3
+    Order:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+        name:
+          type: string
+          pattern: ^[^\s]*$
+          example: John
+          description: ...
+        table_number:
+          $ref: '#/components/schemas/TableNumber'
+        dish_ids:
+          $ref: '#/components/schemas/DishIds'
+        special_requests:
+          $ref: '#/components/schemas/SpecialRequests'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        scheduled_at:
+          $ref: '#/components/schemas/ScheduledAt'
+        status:
+          $ref: '#/components/schemas/Status'
+    Password:
+      type: string
+      description: ...
+      example: P@ssw0rd!
+    PreparationTime:
+      type: integer
+      description: ...
+      example: 45
+    Price:
+      type: number
+      format: float
+      example: 999
+      description: |
+        The economic price, in cents.
+    Priority:
+      type: integer
+      minimum: 0
+      maximum: 5
+      default: 3
+      description: ...
+    Problem:
+      type: object
+      properties:
+        title:
+          type: string
+          description: ...
+          example: Human-readable error title.
+        detail:
+          type: string
+          description: ...
+          example: Human-readable error details.
+      required:
+        - title
+        - detail
+    Role:
+      type: string
+      enum:
+        - patron
+        - expeditor
+        - chef
+        - manager
+      example: manager
+      description: ...
+    ScheduledAt:
+      type: string
+      format: date-time
+      description: ...
+      nullable: true
+      example: null
+    Station:
+      type: string
+      description: ...
+      enum:
+        - cold
+        - hot
+        - beverages
+      example: hot
+    Status:
+      type: string
+      nullable: true
+      enum:
+        - Draft
+        - Received
+        - In Progress
+        - Ready for Assembly
+        - On the Way
+        - Ready for Pickup
+      example: Received
+      description: ...
+    TableNumber:
+      type: integer
+      example: 8
+      nullable: true
+      description: ...
+    TokenType:
+      type: string
+      description: ...
+      example: Bearer
+    UpdatedAt:
+      type: string
+      format: date-time
+      example: '2024-04-22T10:00:00Z'
+      readOnly: true
+      description: |
+        The date and time at which the system
+        changed the object.
+        
+        YYYY-MM-DDTHH:MM:SSZ
+    User:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+        user_name:
+          $ref: '#/components/schemas/UserName'
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          $ref: '#/components/schemas/Password'
+        role:
+          $ref: '#/components/schemas/Role'
+    UserName:
+      type: string
+      description: ...
+      example: john_doe
+  securitySchemes:
+    AccessToken:
+      type: http
+      scheme: bearer
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: ...
